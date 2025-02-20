@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<h:head>
+	<style>
+html {
+	background-image: url("fundo.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
+}
+</style>
+
+	<link rel="icon" type="image/png"
+		href="imagens/imagens/apple-icon-60x60.png" />
+
+	<link rel="stylesheet" href="css/estilo.css" />
+	<h:outputStylesheet library="css" name="estilo.css" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Adiblock</title>
+</h:head>
+<h:body>
+	<div id="cabecalho">
+		<h:form>
+			<p:sidebar widgetVar="sidebar3" position="top"
+				style="opacity:0.9;font-size: 18px;">
+				<p:graphicImage library="imagens"
+					name="logoadiblock_transparent.png" width="150" />
+				<p:growl id="messages" />
+
+				<p:menubar
+					style=" font-weight: bold;background-color:#6495ED!important;font-size: 18px;">
+					<p:submenu label="Menu" icon="pi pi-home"
+						style="font-size: 28px; font-weight: bold;	background-color:#6495ED!important;">
+						<p:menuitem value="Menu Principal" icon="pi pi-home"
+							style=" font-size: 28px; font-weight: bold;background-color:#6495ED!important;"
+							url="http://localhost:8080/adiblock/menuPrincipal.xhtml" />
+					</p:submenu>
+					<p:submenu label="Cadastro" icon="pi pi-fw pi-file"
+						style=" font-size: 28px; font-weight: bold;	background-color:#6495ED!important;">
+						<p:submenu label="Novo" icon="pi pi-fw pi-plus"
+							style=" font-size: 28px; font-weight: bold;	background-color:#6495ED!important;">
+							<p:menuitem value="Empresa" icon="pi pi-fw pi-bookmark"
+								style="	font-size: 28px; font-weight: bold;background-color:#6495ED!important;"
+								url="http://localhost:8080/adiblock/cadastrarEmpresa.xhtml" />
+							<p:menuitem value="Produto" icon="pi pi-fw pi-bookmark"
+								style=" font-size: 28px; font-weight: bold;	background-color:#6495ED!important;"
+								url="http://localhost:8080/adiblock/cadastrarProduto.xhtml" />
+						</p:submenu>
+					</p:submenu>
+					<p:submenu label="Venda" icon="pi pi-shopping-cart"
+						style="font-size: 28px; font-weight: bold;	background-color:#6495ED!important;">
+						<p:menuitem value="Proposta de Venda" icon="pi pi-shopping-cart"
+							style=" font-size: 28px; font-weight: bold;	background-color:#6495ED!important;"
+							url="http://localhost:8080/adiblock/venda.xhtml" />
+					</p:submenu>
+					<f:facet name="options">
+						<p:outputLabel
+							value="#{funcionariobean.usuarioLogado.nomeFuncionario}"
+							icon="pi pi-fw pi-sign-out"
+							style=" font-size: 28px; margin: 0 15px;"
+							styleClass="ui-button-danger" />
+						<p:commandLink value="SAIR" icon="pi pi-fw pi-sign-out"
+							style=" font-size: 28px;background-color:#000000!important"
+							action="#{funcionariobean.deslogar}"
+							styleClass="ui-button-danger" />
+					</f:facet>
+				</p:menubar>
+			</p:sidebar>
+		</h:form>
+		<h:form>
+			<center>
+				<br /> <br /> <br />
+				<br /> <br /> <br />
+				<br /> <br /> <br />
+				<p:graphicImage library="imagens"
+					name="logoadiblock_transparent.png" width="350" />
+
+				<br />
+				<br />
+
+				<p:commandButton value="Menu"
+					styleClass="rounded-button ui-button-blue"
+					style="width:300px;height:100px;font-size: 45px;opacity:0.9; font-weight: bold;"
+					type="button" onclick="PF('sidebar3').show()" icon="pi pi-bars" />
+			</center>
+		</h:form>
+	</div>
+</h:body>
+</html>

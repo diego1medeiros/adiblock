@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"   
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+	<link rel="stylesheet" href="css/estilo.css" />
+	<h:outputStylesheet library="css" name="estilo.css" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>adiblock</title>
+</h:head>
+<h:body>
+	<ui:composition template="/_templatefundo.xhtml">
+		<ui:define name="conteudo">
+			<p:sidebar widgetVar="sidebar1" style="opacity:0.9; width: 450px;"
+				blockScroll="true">
+				<center>
+					<p:graphicImage library="imagens" name="logoadiblock_transparent.png"
+						width="280" />
+					<h1 style="font-weight: bold;">LOGIN</h1>
+					<h:form id="login">
+						<p:growl showDetail="true" id="mesagens" />
+              <p:toolbar style="opacity: 1.0;">
+							<p:toolbarGroup >
+								<p:panelGrid columns="1" style="text-align: center;">
+
+									<p:outputLabel value="Login" for="login"
+										 style="font-weight: bold; color: #007bff; text-align: center;"/>
+									<p:inputText value="#{login}" id="login"
+										placeholder="digite o login" size="40"
+										requiredMessage="O login é obrigatoria" />
+
+									<p:outputLabel value="Senha" for="senha"
+			              	style="font-weight: bold; color: #007bff; text-align: center;"/>
+									<p:password value="#{senha}" id="senha"
+										placeholder="digite o senha" size="40"
+										requiredMessage="A senha e obrigatoria" />
+								</p:panelGrid>
+							</p:toolbarGroup>
+						</p:toolbar>
+						<br />
+						<p:commandButton
+							action="#{funcionariobean.isLoginSenhaValida(login,senha)}"
+							value="Efetue Login" update="@form" process="@form"
+							style=" font-weight: bold;"
+							styleClass="rounded-button ui-button-blue" icon="pi pi-sign-in" />
+						<br />
+						<h2>Não tenho cadastro ?</h2>
+					</h:form>
+					<p:commandLink value="Cadastrar Login"
+						oncomplete="PF('cadastroNovoFuncionario').show()" />
+				</center>
+			</p:sidebar>
+			<center>
+				 <br /> <br />
+				<br /> <br /> <br /> <br /> <br />
+<p:graphicImage library="imagens" name="logoadiblock_transparent.png"
+						width="380" />				<br /> <br />
+				<p:commandButton value="Efetue Login"
+					styleClass="rounded-button ui-button-blue" type="button"
+					onclick="PF('sidebar1').show()" icon="pi pi-sign-in"
+					style="width:300px;height:100px;opacity:0.9; font-size: 25px; font-weight: bold;" />
+			</center>
+			<center>
+				<br /> <br /> <br /> <br /> <br />
+			</center>
+
+			<h:form id="tabela">
+
+				<p:dialog header="Cadastrar Login"
+					showEffect="fade" style="opacity:1.0;" maximizable="true"
+					minimizable="true" modal="true" widgetVar="cadastroNovoFuncionario"
+					responsive="true">
+					<p:toolbar>
+						<p:toolbarGroup>
+							<p:outputPanel class="ui-fluid" id="tabela1">
+								<p:growl showDetail="true" id="msn" />
+								<h:panelGrid id="pnResultado" columns="2" cellspacing="6"
+									cellpadding="6">
+
+									<p:outputLabel value="#{bundle['funcionario.nome']}" for="nome"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputText
+										value="#{funcionariobean.funcionario.nomeFuncionario}"
+										id="nome" required="true" style="font-weight: bold;"
+										requiredMessage="O nome e Obrigatorio!!"
+										placeholder="digite o Nome" size="45" />
+
+									<p:outputLabel value="#{bundle['funcionario.login']}"
+										for="login"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputText id="login" required="true"
+										style=" font-weight: bold;"
+										requiredMessage="O Login e obrigatório !!"
+										placeholder="digite o Login"
+										value="#{funcionariobean.funcionario.login}" size="15" />
+
+									<p:outputLabel value="#{bundle['funcionario.senha']}"
+										for="senha"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputText id="senha" style=" font-weight: bold;"
+										required="true" requiredMessage="A senha e obrigatório !!"
+										placeholder="digite a Senha"
+										value="#{funcionariobean.funcionario.senha}" size="15" />
+
+									<p:outputLabel
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputText type="hidden"
+										value="#{funcionariobean.funcionario.id}" />
+
+								</h:panelGrid>
+							</p:outputPanel>
+						</p:toolbarGroup>
+					</p:toolbar>
+					<f:facet name="footer">
+						<center>
+							<p:commandButton value="#{bundle.salvar}" id="salvar"
+								styleClass="ui-button-info" update=":tabela:tabela1"
+								action="#{funcionariobean.cadastrarFuncionario()}"
+								oncomplete="if (!args.validationFailed) { PF('cadastroNovoFuncionario').hide(); }"
+								icon="pi pi-save" style="margin-tpo:10pix" />
+							<p:tooltip for="salvar" value="Salvar Funcionario"
+								showEffect="clip" hideEffect="fold" />
+							<font></font> <font></font>
+							<p:commandButton value="Cancel" icon="pi pi-times"
+								onclick="PF('cadastroNovoFuncionario').hide()"
+								class="ui-button-secondary" type="button" />
+						</center>
+					</f:facet>
+				</p:dialog>
+			</h:form>
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

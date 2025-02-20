@@ -1,0 +1,53 @@
+@charset "ISO-8859-1";
+
+.html{
+	background-image: url("restaurant.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
+}
+
+.my-schedule .fc-event-time, .my-schedule .fc-event-title {
+    color: red;
+}
+.centered {
+    text-align: center;
+}
+
+.ui-column td{
+	text-align: center;
+	font-size: 12px;
+	fonte-family:"Helvetica Neue", HElvetica, Arial, sans-serif;
+}
+
+.ui-submenu td {
+	background-color: Wheat !important;
+	font-weight: bold;
+}
+
+.cheap {
+	background-color: #6495ED !important;
+	background-image: none !important;
+	color: #ffffff !important;
+}
+
+.ui-panelgrid td {
+background-color:#363636!important;;
+font-weight: bold;
+}
+
+.ui-menubar td {
+background-color:#D2691E!important;
+font-weight: bold;
+}
+
+.ui-menuitem td {
+background-color:#D2691E!important;
+font-weight: bold;
+}
+
+ui_sidebar td{
+	background-color: Wheat !important;
+	font-weight: bold;
+}

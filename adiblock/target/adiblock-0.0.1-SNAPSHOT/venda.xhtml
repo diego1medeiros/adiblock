@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Adiblock</title>
+</h:head>
+
+<h:body>
+	<ui:composition template="/_template.xhtml">
+		<ui:define name="conteudo">
+			<p:growl showDetail="true" id="mesagens" />
+
+			<h:form id="form1">
+				<p:dialog widgetVar="pesquisa" id="excluir"
+					style="text-align:center;font-weight: bold; font-size: 39px;background-color:#363636;opacity:0.8;">
+					<p:dataTable value="#{vendaBean.listaDaVenda}" var="venda"
+						scrollable="true" scrollHeight="600" id="excluirTabela"
+						style="font-weight: bold; font-size: 13px; 
+				fonte-family:Helvetica Neue, HElvetica, Arial, sans-serif;"
+						paginator="true" rows="5">
+						<p:column headerText="Pedido" style=" text-align: center;">
+							<h:outputText value="#{venda.id}" />
+						</p:column>
+						<p:column headerText="Empresa" style=" text-align: center;">
+							<h:outputText value="#{venda.empresa.razaoSocial}" />
+						</p:column>
+						<p:column headerText="Enderenço" style=" text-align: center;">
+							<h:outputText
+								value="#{venda.empresa.endereco.rua} 
+									- #{venda.empresa.endereco.numero}  
+									- #{venda.empresa.endereco.bairro} 
+									- #{venda.empresa.endereco.cidade}" />
+						</p:column>
+						<p:column headerText="Telefone" style=" text-align: center;">
+							<h:outputText value="#{venda.empresa.telefone}" />
+						</p:column>
+						<p:column headerText="Quantidade" style=" text-align: center;">
+							<h:outputText value="#{venda.qtdeTotal}" />
+						</p:column>
+						<p:column headerText="Valor Total" style=" text-align: center;">
+							<h:outputText value="#{venda.valorTotal}">
+								<f:convertNumber type="currency" currencySymbol="R$" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="" style=" text-align:center;" width="90">
+							<p:commandButton ajax="false" onclick="this.form.target='_blank'"
+								action="#{vendaBean.getImprimirProposta(venda)}" id="imprimir"
+								icon="pi pi-print"
+								update=":mesagens :form:excluirTabela :form:excluir"
+								process="@this">
+								<p:tooltip for="imprimir" value="Imprimir Proposta"
+									showEffect="clip" hideEffect="fold" />
+							</p:commandButton>
+							<font></font>
+							<font></font>
+
+							<p:commandButton ajax="false" onclick="this.form.target='_blank'"
+								action="#{vendaBean.getEnviarEmailProposta(venda)}"
+								id="enviarEmail" icon="pi pi-envelope"
+								update=":mesagens :form:excluirTabela :form:excluir"
+								process="@this">
+								<p:tooltip for="enviarEmail" value="Enviar Proposta"
+									showEffect="clip" hideEffect="fold" />
+							</p:commandButton>
+							<font></font>
+							<font></font>
+							<br />
+							<br />
+							<p:commandButton
+								actionListener="#{vendaBean.excluirProposta(venda)}"
+								id="excluir" update=":mesagens form1:excluirTabela"
+								styleClass="ui-button-danger" icon="pi pi-trash" process="@this">
+								<p:confirm header="Confirmação"
+									message="Deseja excluir esta Proposta?"
+									icon="pi pi-info-circle" />
+								<p:tooltip value="Excluir pedido" for="excluir"
+									showEffect="clip" hideEffect="fold" />
+							</p:commandButton>
+							<font></font>
+							<font></font>
+						</p:column>
+					</p:dataTable>
+				</p:dialog>
+			</h:form>
+
+			<h:form id="form">
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					responsive="true" width="350">
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no ui-button-flat" />
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes ui-button-danger" />
+				</p:confirmDialog>
+				<p:panel style=" text-align:center;opacity:0.8;">
+					<p:commandButton id="novo" value="Lista de Produtos"
+						icon="pi pi-plus" oncomplete="PF('manageProductDialog').show()"
+						styleClass="ui-button-success"
+						style="font-weight: bold;font-size:20px;margin-right: .5rem">
+						<p:tooltip for="novo" value="Lista de Produtos" showEffect="clip"
+							hideEffect="fold" />
+					</p:commandButton>
+
+					<p:commandButton id="pedido" value="Lista de Propostas"
+						icon="pi pi-search" process="@this"
+						update=":mesagens form1:excluirTabela "
+						oncomplete="PF('pesquisa').show()"
+						style="font-weight: bold;font-size:20px;margin-right: .5rem">
+						<p:tooltip for="pedido" value="Lista de Propostas"
+							showEffect="clip" hideEffect="fold" />
+					</p:commandButton>
+				</p:panel>
+			</h:form>
+
+			<h:form id="forn">
+				<p:dialog header="Proposta de Venda" showEffect="fade" id="produto2"
+					style="opacity:0.9; font-weight: bold; " modal="true"
+					maximizable="true" minimizable="true"
+					widgetVar="manageProductDialog" responsive="true"
+					blockScroll="true">
+					<p:toolbar>
+						<p:toolbarGroup>
+							<p:outputPanel id="produto" class="ui-fluid">
+								<h:panelGrid columns="4" cellspacing="6" cellpadding="4">
+
+									<p:outputLabel value="#{bundle['produto.nome']}"
+										style="font-weight: bold; padding-right: 5px; float: right; " />
+									<p:selectOneMenu value="#{produtobean.produtoDto.id}"
+										filter="true" style="font-weight: bold;"
+										converter="#{produtoConverter}">
+										<f:selectItem itemLabel="Selecione a produto"
+											noSelectionOption="true" style="font-weight: bold;" />
+										<f:selectItems value="#{produtobean.listaNome}" var="produto"
+											itemLabel="#{produto}" itemValue="#{produto}"
+											style="font-weight: bold;" />
+										<p:ajax event="change" update="produto"
+											listener="#{produtobean.encontraProduto}" />
+									</p:selectOneMenu>
+
+									<p:outputLabel value="#{bundle['produto.embalagem']}"
+										for="embalagem"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputText id="embalagem"
+										value="#{produtobean.produtoDto.embalagem}"
+										style="font-weight:bold;" />
+
+									<p:outputLabel value="Classificação de Risco" for="risco1"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputText id="risco1"
+										value="#{produtobean.produtoDto.risco}"
+										style="font-weight:bold;" />
+
+									<p:outputLabel value="#{bundle['produto.preco']}" for="preco"
+										style="font-weight: bold; padding-right: 5px; float: right; " />
+									<p:inputNumber value="#{produtobean.produtoDto.preco}" 
+										id="preco" style="font-weight: bold !important;" roundMethod="S"
+										decimalPlaces="2" symbol="R$" size="25"
+										requiredMessage="O preço e Obrigatorio!!" decimalSeparator=","
+										thousandSeparator="." readonly="false" />
+
+									<p:outputLabel for="qtd1"
+										value="#{bundle['produto.quantidade']}"
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputNumber id="qtd1" min="0"
+										value="#{produtobean.produtoDto.qtdLitro}"
+										requiredMessage="O quantidade e obrigatório !!" size="5" />
+
+									<p:inputText type="hidden"
+										value="#{produtobean.produtoDto.produto}" />
+									<p:inputText type="hidden" value="#{produtobean.produtoDto.id}" />
+
+
+									<p:outputLabel value="Preço Com Desconto" for="precoDesconto"
+										style="font-weight: bold; padding-right: 5px; float: right; " />
+									<p:inputNumber value="#{produtobean.produtoDto.precoDesconto}"
+										id="precoDesconto" style=" font-weight: bold; "
+										required="true" roundMethod="S" decimalPlaces="2" symbol="R$"
+										size="25" requiredMessage="O preço e Obrigatorio!!"
+										decimalSeparator="," thousandSeparator="." readonly="false" />
+
+									<p:outputLabel for="qtd" value="Quantidade"
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputNumber id="qtd" min="0"
+										value="#{produtobean.produtoDto.qtd}" required="true"
+										requiredMessage="O quantidade e obrigatório !!" size="5" />
+
+									<p:inputText type="hidden"
+										value="#{produtobean.produtoDto.produto}" />
+									<p:inputText type="hidden" value="#{produtobean.produtoDto.id}" />
+								</h:panelGrid>
+							</p:outputPanel>
+						</p:toolbarGroup>
+					</p:toolbar>
+					<center>
+						<p:commandButton value="Adicionar o Produto"
+							icon="pi pi-shopping-cart" style="font-weight: bold;"
+							actionListener="#{vendaBean.adicionarItens}"
+							process="produto2 produto tabelaitens @this"
+							update="mesagens forn produto2 produto ">
+							<f:attribute name="produtoSelecionado"
+								value="#{produtobean.produtoDto}" />
+						</p:commandButton>
+					</center>
+				</p:dialog>
+
+				<p:toolbar style="opacity:0.8;">
+					<p:toolbarGroup>
+						<p:dataTable value="#{vendaBean.itensVenda}" var="itens"
+							id="tabelaitens" resizableColumns="true"
+							style="font-weight: bold; font-size: 15px;opacity:0.9;
+				fonte-family:Helvetica Neue, HElvetica, Arial, sans-serif;"
+							paginator="true" rows="7" stickyHeader="true">
+							<p:column headerText="#{bundle['produto.nome']}"
+								style=" text-align: center;">
+								<h:outputText value="#{itens.produto.produto}" />
+							</p:column>
+
+							<p:column headerText="#{bundle['produto.preco']}"
+								style="text-align: center; white-space: pre-wrap; word-wrap: break-word;">
+								<h:outputText value="#{itens.produto.preco}">
+									<f:convertNumber type="currency" currencySymbol="R$" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Preço com Desconto"
+								style="text-align: center; white-space: pre-wrap; word-wrap: break-word;">
+								<h:outputText value="#{itens.produto.precoDesconto}">
+									<f:convertNumber type="currency" currencySymbol="R$" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Quantidde" style=" text-align:center;">
+								<h:outputText value="#{itens.qtde}" />
+							</p:column>
+
+							<p:column headerText="Embalagem" style=" text-align: center;">
+								<h:outputText value="#{itens.produto.embalagem}" />
+							</p:column>
+
+							<p:column headerText="Quantidade Litros"
+								style=" text-align: center;">
+								<h:outputText value="#{itens.qtdLitros}" />
+							</p:column>
+
+							<p:column headerText="Valor Parcial" style=" text-align: center;">
+								<h:outputText value="#{itens.valorTotal}">
+									<f:convertNumber type="currency" currencySymbol="R$" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="" style=" text-align:center;">
+								<p:commandButton actionListener="#{vendaBean.excluirItem}"
+									id="excluir" styleClass="ui-button-danger" icon="pi pi-trash"
+									update=":mesagens forn tabelaitens" process="@this">
+									<p:tooltip for="excluir" value="Excluir Item" showEffect="clip"
+										hideEffect="fold" />
+									<f:attribute name="itemSelecionado" value="#{itens}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+
+						<span style="padding-left: 520px;"></span>
+						<p:panel header="" id="valortotal" style="text-align:center;">
+							<p:outputLabel value="TOTAL  = "
+								style="font-weight: bold; font-size:25px;" />
+							<h:outputText value="#{vendaBean.venda.valorTotal}"
+								style="font-weight: bold; font-size:25px;">
+								<f:convertNumber type="currency" currencySymbol="R$" />
+
+							</h:outputText>
+							<br />
+							<br />
+
+							<p:commandButton value="Proposta" styleClass="ui-button-raised "
+								id="proposta" style="font-weight: bold; font-size:25px;"
+								icon="pi pi-wallet"
+								disabled="#{vendaBean.venda.valorTotal eq 0}"
+								oncomplete="PF('sidebar').show();" />
+						</p:panel>
+					</p:toolbarGroup>
+				</p:toolbar>
+
+				<p:sidebar widgetVar="sidebar" position="right"
+					style="opacity:0.9; width: 1300px;overflow: auto;max-height: 1000px;"
+					id="lista" blockScroll="true" dynamic="true">
+					<center>
+						<p:graphicImage library="imagens" name="logoadiblock_transparent.png"
+							width="150" />
+					</center>
+					<p:toolbar style="opacity:0.9;">
+						<p:toolbarGroup>
+							<p:panel style=" text-align: center;overflow: auto;">
+								<p:dataTable value="#{vendaBean.itensVenda}" var="itens">
+									<p:column headerText="#{bundle['produto.nome']}"
+										style="font-weight: bold; text-align: center;">
+										<h:outputText value="#{itens.produto.produto}" />
+									</p:column>
+									<p:column headerText="Valor" style="font-weight: bold; text-align:center;">
+										<h:outputText value="#{itens.valorTotal}">
+											<f:convertNumber type="currency" currencySymbol="R$" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Quantidade Litros"
+										style="font-weight: bold; text-align: center;">
+										<h:outputText value="#{itens.qtdLitros}" />
+									</p:column>
+									<p:column headerText="Quantidade" style="font-weight: bold; text-align:center;">
+										<h:outputText value="#{itens.qtde}" />
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+							<br />
+							<br />
+
+							<p:outputPanel id="empresa" class="ui-fluid">
+								<h:panelGrid columns="4" cellspacing="6" cellpadding="6">
+
+									<p:outputLabel value="#{bundle['empresa.razao']}"
+										style="font-weight: bold; padding-right: 1px; float: right; " />
+									<p:selectOneMenu value="#{empresabean.empresaDto.id}"
+										required="true" requiredMessage="A empresa e obrigatorio"
+										filter="true" style="font-weight: bold;"
+										converter="#{empresaConverter}">
+										<f:selectItem itemLabel="Selecione a empresa"
+											noSelectionOption="true" style="font-weight: bold;" />
+										<f:selectItems value="#{empresabean.listaNome}" var="empresa"
+											itemLabel="#{empresa}" itemValue="#{empresa}"
+											style="font-weight: bold;" />
+										<p:ajax event="change" update="empresa"
+											listener="#{empresabean.encontraEmpresa}" />
+									</p:selectOneMenu>
+
+
+
+									<p:outputLabel value="#{bundle['empresa.cnpj']}" for="cnpj"
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputMask value="#{empresabean.empresaDto.cnpj}" id="cnpj"
+										mask="99.999.999/9999-99" style=" font-weight: bold;"
+										validateMask="true" requiredMessage="O cnpj e obrigatório !!"
+										placeholder="digite o cnpj" size="20" />
+
+									<p:outputLabel value="#{bundle['empresa.inscricao']}" for="n"
+										style=" font-weight: bold; padding-right: 5px; float: left;" />
+									<p:inputText value="#{empresabean.empresaDto.inscricao}" id="n"
+										placeholder="digite a Inscrição" style=" font-weight: bold;"
+										size="20" />
+
+
+									<p:outputLabel value="#{bundle['empresa.telefone']}"
+										for="telefone"
+										style="font-weight: bold; padding-right: 1px; float: right;" />
+									<p:inputMask value="#{empresabean.empresaDto.telefone}"
+										id="telefone" mask="(99) 99999-9999"
+										style=" font-weight: bold;" validateMask="true"
+										requiredMessage="O telefone e obrigatório !!"
+										placeholder="digite o telefone" size="20" />
+
+									<p:outputLabel value="#{bundle['empresa.email']}" for="email"
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputText value="#{empresabean.empresaDto.email}" id="email"
+										validateMask="true" style=" font-weight: bold;"
+										requiredMessage="O email e obrigatório !!"
+										placeholder="digite o email" size="40" />
+
+									<p:outputLabel value="#{bundle['endereco.cep']}" for="cep"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputMask mask="99999-999" id="cep" style="font-weight:bold"
+										value="#{empresabean.empresaDto.endereco.cep}" size="20"
+										placeholder="digite o cep">
+									</p:inputMask>
+
+									<p:outputLabel value="#{bundle['endereco.estado']}"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputText size="15" style="font-weight:bold"
+										placeholder="digite o estado"
+										value="#{empresabean.empresaDto.endereco.estado}" />
+
+									<p:outputLabel value="#{bundle['endereco.cidade']}"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputText style="font-weight:bold"
+										value="#{empresabean.empresaDto.endereco.cidade}"
+										placeholder="digite a cidade" size="20" />
+
+									<p:outputLabel value="#{bundle['endereco.bairro']}"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputText size="40" style="font-weight:bold"
+										value="#{empresabean.empresaDto.endereco.bairro}"
+										placeholder="digite o bairro" />
+
+									<p:outputLabel value="#{bundle['endereco.rua']}" for="rua"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputText size="30" id="rua" style="font-weight:bold"
+										value="#{empresabean.empresaDto.endereco.rua}"
+										placeholder="digite a rua" />
+
+									<p:outputLabel value="#{bundle['endereco.numero']}"
+										for="numero"
+										style=" font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputText value="#{empresabean.empresaDto.endereco.numero}"
+										id="numero" placeholder="digite o numero"
+										style=" font-weight: bold;" size="15" />
+
+
+									<p:outputLabel value="Prazo de Pagamento" for="prazo"
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputText style=" font-weight: bold;" required="true"
+										requiredMessage="O prazo do pagamento e obrigatorio"
+										value="#{vendaBean.venda.comerciasDto.pagamento}"
+										placeholder="digite Prazo de Pagamento" id="prazo" size="20" />
+
+									<p:outputLabel value="Tipo de Frete" for="frete"
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:selectOneListbox
+										value="#{vendaBean.venda.comerciasDto.frete}"
+										style="font-weight: bold; width: 500px; font-size: 12px;">
+										<f:selectItems value="#{vendaBean.tipoDeFrete}" id="frete"
+											requiredMessage="Tipo de Frete e Obrigatorio!!" />
+									</p:selectOneListbox>
+
+									<p:outputLabel value="Prazo de Entrega" for="entrega"
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputText style=" font-weight: bold;" required="true"
+										value="#{vendaBean.venda.comerciasDto.entrega}"
+										requiredMessage="o prazo de entrega e obrigatorio!!"
+										placeholder="digite o Tipo de Frete" id="entrega" size="20" />
+
+									<p:outputLabel
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputText type="hidden" value="#{empresabean.empresaDto.id}" />
+
+									<p:inputText type="hidden"
+										value="#{empresabean.empresaDto.razaoSocial}" />
+
+								</h:panelGrid>
+							</p:outputPanel>
+						</p:toolbarGroup>
+					</p:toolbar>
+					<center>
+						<br />
+						<div>
+							<h:outputText value="#{vendaBean.venda.data}"
+								style="font-weight: bold; font-size:25px; text-align: center;overflow: auto; ">
+								<f:convertDateTime pattern="dd/MM/yyyy " locale="pt_BR"
+									timeZone="America/Sao_Paulo" />
+							</h:outputText>
+						</div>
+						<br />
+						<div>
+							<p:outputLabel value="TOTAL  = " for="total"
+								style="font-weight: bold; font-size:25px;" />
+							<h:outputText value="#{vendaBean.venda.valorTotal}" id="total"
+								style="font-weight: bold; font-size:25px;">
+								<f:convertNumber type="currency" currencySymbol="R$" />
+							</h:outputText>
+						</div>
+						<br />
+						<p:commandButton value="Finalizar o Proposta"
+							styleClass="ui-button-success"
+							update="mesagens forn empresa lista tabelaitens"
+							process="empresa lista @this"
+							actionListener="#{vendaBean.finalizarVenda}"
+							style="font-weight: bold; font-size:20px;">
+							<f:attribute name="empresaSelecionado"
+								value="#{empresabean.empresaDto}" />
+							<p:confirm header="Confirmação"
+								message="Deseja realmente finalizar o pedido"
+								icon="pi pi-info-circle" />
+						</p:commandButton>
+					</center>
+
+					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+						responsive="true" width="350">
+						<p:commandButton value="Não" type="button"
+							styleClass="ui-confirmdialog-no ui-button-flat" />
+						<p:commandButton value="Sim" type="button"
+							styleClass="ui-confirmdialog-yes ui-button-success" />
+					</p:confirmDialog>
+				</p:sidebar>
+
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

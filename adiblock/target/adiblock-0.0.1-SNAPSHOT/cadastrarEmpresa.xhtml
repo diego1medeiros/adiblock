@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+	<link rel="stylesheet" href="css/estilo.css" />
+	<h:outputStylesheet library="css" name="estilo.css" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="shortcut icon" href="logo1.png" />
+	<title>Adiblock</title>
+</h:head>
+<h:body>
+	<ui:composition template="/_template.xhtml">
+		<ui:define name="conteudo">
+			<br />
+			<h:form id="form">
+				<p:growl showDetail="true" />
+				<p:toolbar style="opacity:0.8">
+					<p:toolbarGroup>
+						<!-- botão para cadastrar fornecedores novos -->
+						<p:commandButton id="novo" value="#{bundle.novo}"
+							icon="pi pi-plus" update=":dialogs:manage-empresa-content"
+							process="@this" oncomplete="PF('manageEmpresaDialog').show()"
+							styleClass="ui-button-success"
+							style="font-weight: bold;font-size:20px;margin-right: .5rem">
+							<p:tooltip for="novo" value="Nova Empresa" showEffect="clip"
+								hideEffect="fold" />
+						</p:commandButton>
+
+						<span
+							style="font-weight: bold; font-size: 45px; padding-left: 320px;">Cadastrar
+							Empresa</span>
+						<!--  fim botão para cadastrar fornecedores novos -->
+
+						<p:dataTable value="#{empresabean.listaDeEmpresas}" var="e"
+							widgetVar="Empresas" rowKey="#{e.id}" id="tabela"
+							style="font-weight: bold; opacity:0.8; font-size: 12px;
+				fonte-family:Helvetica Neue, HElvetica, Arial, sans-serif;"
+							paginator="true" rows="7" stickyHeader="true"
+							resizableColumns="true">
+
+							<f:facet name="header">
+								<div class="empresa-table-header">
+									<span style="font-weight: bold; font-size: 16px">Empresas</span>
+									<span class="filter-container ui-input-icon-left"> <i
+										class="pi pi-search"></i> <p:inputText id="globalFilter"
+											onkeyup="PF('Empresas').filter()"
+											placeholder="Pesquisar empresas" />
+									</span>
+								</div>
+							</f:facet>
+							<p:column headerText="#{bundle['empresa.razao']}"
+								style="text-align: center; white-space: normal;"
+								filterBy="#{e.razaoSocial}">
+								<h:outputText value="#{e.razaoSocial}" />
+							</p:column>
+
+							<p:column headerText="Contato"
+								style="text-align: center; white-space: normal; ">
+								<h:outputText value="#{e.contato}" />
+							</p:column>
+
+
+							<p:column headerText="#{bundle['empresa.cnpj']}"
+								style="text-align: center; white-space: pre-wrap; word-wrap: break-word;">
+
+								<h:outputText value="#{e.cnpj}" style="display: block;" />
+							</p:column>
+							<p:column headerText="#{bundle['empresa.telefone']}"
+								style="text-align: center; white-space: pre-wrap; word-wrap: break-word;">
+
+								<h:outputText value="#{e.telefone}" />
+							</p:column>
+							<p:column headerText="#{bundle['empresa.email']}"
+								style="text-align: center; white-space: pre-wrap; word-wrap: break-word;">
+
+								<h:outputText value="#{e.email}" />
+							</p:column>
+							<p:column headerText="#{bundle['endereco.cep']}"
+								style="text-align: center; white-space: normal;">
+
+								<h:outputText value="#{e.endereco.cep}" />
+							</p:column>
+							<p:column headerText="#{bundle['endereco.bairro']}"
+								style="text-align: center; white-space: normal;">
+
+								<h:outputText value="#{e.endereco.bairro}" />
+							</p:column>
+							<p:column headerText="#{bundle['endereco.cidade']}"
+								style="text-align: center; white-space: normal;">
+
+								<h:outputText value="#{e.endereco.cidade}" />
+							</p:column>
+							<p:column headerText="#{bundle['endereco.estado']}"
+								style="text-align: center; white-space: normal;">
+
+								<h:outputText value="#{e.endereco.estado}" />
+							</p:column>
+							<p:column headerText="Rua"
+								style="text-align: center; white-space: normal; ">
+
+								<h:outputText value="#{e.endereco.rua}" />
+							</p:column>
+							<p:column headerText="#{bundle['endereco.numero']}"
+								style="text-align: center; white-space: normal;">
+
+								<h:outputText value="#{e.endereco.numero}" />
+							</p:column>
+							<p:column headerText="#{bundle['empresa.inscricao']}" width="70"
+								style="text-align: center; white-space: pre-wrap; word-wrap: break-word;">
+								<h:outputText value="#{e.inscricao}" style="display: block;" />
+							</p:column>
+
+							<p:column headerText="" style=" text-align: center;">
+								<br />
+								<br />
+								<br />
+								<br />
+								<p:commandButton id="editar" icon="pi pi-pencil"
+									oncomplete="PF('manageEmpresaDialog').show()"
+									update=":dialogs:manage-empresa-content" process="@this">
+									<f:setPropertyActionListener value="#{e}"
+										target="#{empresabean.empresaDto}" />
+									<p:tooltip for="editar" value="Editar Empresa"
+										showEffect="clip" hideEffect="fold" />
+									<p:resetInput target=":dialogs:manage-empresa-content" />
+								</p:commandButton>
+								<font></font>
+								<font></font>
+								<p:commandButton
+									actionListener="#{empresabean.excluirEmpresa(e)}" id="excluir"
+									styleClass="ui-button-danger" icon="pi pi-trash"
+									update="form tabela" process="@this">
+									<p:confirm header="Confirmação"
+										message="Deseja excluir esta Empresa ?"
+										icon="pi pi-info-circle" />
+									<p:tooltip for="excluir" value="Excluir Empresa"
+										showEffect="clip" hideEffect="fold" />
+								</p:commandButton>
+								<br />
+								<br />
+							</p:column>
+						</p:dataTable>
+					</p:toolbarGroup>
+				</p:toolbar>
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					responsive="true" width="350">
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no ui-button-flat" />
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes ui-button-danger" />
+				</p:confirmDialog>
+			</h:form>
+
+
+			<h:form id="dialogs">
+				<p:dialog header="#{bundle['fornecedor.cadastro']}"
+					showEffect="fade" style="opacity:0.9;" maximizable="true"
+					minimizable="true" modal="true" widgetVar="manageEmpresaDialog"
+					responsive="true">
+
+					<p:toolbar>
+						<p:toolbarGroup>
+							<p:outputPanel id="manage-empresa-content" class="ui-fluid">
+								<h:panelGrid id="pnResultado" columns="4" cellspacing="6"
+									cellpadding="6">
+
+									<p:outputLabel value="#{bundle['empresa.razao']}" for="nome"
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputText value="#{empresabean.empresaDto.razaoSocial}"
+										id="nome" required="true" style=" font-weight: bold;"
+										requiredMessage="O nome e Obrigatorio!!"
+										placeholder="digite o Nome" size="40" />
+
+
+									<p:outputLabel value="Contato" for="contato"
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputText value="#{empresabean.empresaDto.contato}"
+										id="contato" style=" font-weight: bold;"
+										placeholder="digite o nome do contato" size="40" />
+
+									<p:outputLabel value="#{bundle['empresa.cnpj']}" for="cnpj"
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputMask value="#{empresabean.empresaDto.cnpj}" id="cnpj"
+										required="true" mask="99.999.999/9999-99"
+										style=" font-weight: bold;" validateMask="true"
+										requiredMessage="O cnpj e obrigatório !!"
+										placeholder="digite o cnpj" size="15" />
+
+									<p:outputLabel value="#{bundle['empresa.inscricao']}"
+										for="inscricao"
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputMask value="#{empresabean.empresaDto.inscricao}"
+										id="inscricao" mask="999.999.999.999"
+										style=" font-weight: bold;" placeholder="digite o numero"
+										size="15" />
+
+
+
+									<p:outputLabel value="#{bundle['empresa.telefone']}"
+										for="telefone"
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputMask value="#{empresabean.empresaDto.telefone}"
+										id="telefone" required="true" mask="(99) 99999-9999"
+										style=" font-weight: bold;" validateMask="true"
+										requiredMessage="O telefone e obrigatório !!"
+										placeholder="digite o telefone" size="20" />
+
+									<p:outputLabel value="#{bundle['empresa.email']}" for="email"
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputText value="#{empresabean.empresaDto.email}" id="email"
+										validateMask="true" style=" font-weight: bold;"
+										requiredMessage="O email e obrigatório !!"
+										placeholder="digite o email" size="40" />
+
+									<p:outputLabel value="#{bundle['endereco.cep']}" for="cep"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputMask mask="99999-999" id="cep" style="font-weight:bold"
+										value="#{empresabean.empresaDto.endereco.cep}" size="15"
+										placeholder="digite o cep">
+										<p:commandButton icon="pi pi-search"
+											update="form manage-empresa-content"
+											action="#{empresabean.encontraCEP}" />
+									</p:inputMask>
+
+									<p:outputLabel value="#{bundle['endereco.estado']}"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputText size="15" style="font-weight:bold"
+										placeholder="digite o estado"
+										value="#{empresabean.empresaDto.endereco.estado}" />
+
+									<p:outputLabel value="#{bundle['endereco.cidade']}"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputText style="font-weight:bold"
+										value="#{empresabean.empresaDto.endereco.cidade}"
+										placeholder="digite a cidade" size="15" />
+
+									<p:outputLabel value="#{bundle['endereco.bairro']}"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputText size="40" style="font-weight:bold"
+										value="#{empresabean.empresaDto.endereco.bairro}"
+										placeholder="digite o bairro" />
+
+									<p:outputLabel value="#{bundle['endereco.rua']}" for="rua"
+										style="font-weight:bold; padding-right: 5px; float: right;" />
+									<p:inputText size="40" id="rua" style="font-weight:bold"
+										value="#{empresabean.empresaDto.endereco.rua}"
+										placeholder="digite a rua" />
+
+									<p:outputLabel value="#{bundle['endereco.numero']}"
+										for="numero"
+										style=" font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputText value="#{empresabean.empresaDto.endereco.numero}"
+										id="numero" placeholder="digite o numero"
+										style=" font-weight: bold;" size="15" />
+
+
+									<p:outputLabel
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputText type="hidden"
+										value="#{empresabean.empresaDto.funcionario.id}" />
+									<p:outputLabel
+										style="font-weight: bold; padding-right: 5px; float: right;" />
+									<p:inputText type="hidden" value="#{empresabean.empresaDto.id}" />
+
+								</h:panelGrid>
+							</p:outputPanel>
+						</p:toolbarGroup>
+					</p:toolbar>
+					<f:facet name="footer">
+						<center>
+							<p:commandButton value="#{bundle.salvar}" id="salvar"
+								styleClass="ui-button-info"
+								process=":dialogs:manage-empresa-content @this"
+								action="#{empresabean.cadastrarEmpresa()}" icon="pi pi-save"
+								update="form manage-empresa-content"
+								oncomplete="if (!args.validationFailed) { PF('manageEmpresaDialog').hide(); }"
+								style="margin-tpo:10pix ; font-weight: bold;" />
+							<p:tooltip for="salvar" value="Salvar Empresa" showEffect="clip"
+								hideEffect="fold" />
+							<font></font> <font></font>
+							<p:commandButton value="Cancel" icon="pi pi-times"
+								onclick="PF('manageEmpresaDialog').hide()"
+								class="ui-button-secondary" type="button"
+								style="font-weight: bold;" />
+						</center>
+					</f:facet>
+				</p:dialog>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

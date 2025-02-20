@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config version="2.2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="
+ http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_2_2.xsd"
+	id="WebApp_ID">
+	<application>
+	
+	 <locale-config>
+            <default-locale>pt_BR</default-locale>
+        </locale-config>
+	
+		<resource-bundle>
+			<base-name>messages</base-name>
+			<var>bundle</var>
+		</resource-bundle>
+		
+	</application>
+ 	<lifecycle> 
+ 		<phase-listener> br.com.adiblock.utils.Autorizador</phase-listener> -->
+
+ 	</lifecycle> 
+</faces-config>
